@@ -8,10 +8,13 @@
     :root{
       --rose:#ff2f6d;
       --rose2:#ff6aa0;
+      --pink:#ff7fb3;
       --ink:#141414;
-      --card: rgba(255,255,255,0.86);
-      --stroke: rgba(0,0,0,0.08);
-      --shadow: 0 20px 60px rgba(0,0,0,0.20);
+
+      /* Mer “glas”, mer bakgrund */
+      --card: rgba(255,255,255,0.62);
+      --stroke: rgba(255,255,255,0.35);
+      --shadow: 0 20px 60px rgba(0,0,0,0.22);
     }
 
     *{ box-sizing:border-box; }
@@ -24,26 +27,26 @@
       background:#000;
     }
 
-    /* Bakgrundsbild + romantisk overlay */
+    /* Bakgrundsbild + mild overlay (mindre mörk än tidigare) */
     .bg{
       position:fixed; inset:0;
       background-image:
-        radial-gradient(1200px 800px at 20% 10%, rgba(255,47,109,0.35), transparent 55%),
-        radial-gradient(1200px 800px at 80% 20%, rgba(255,190,170,0.30), transparent 55%),
-        linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)),
+        radial-gradient(1200px 800px at 20% 10%, rgba(255,47,109,0.26), transparent 58%),
+        radial-gradient(1200px 800px at 80% 20%, rgba(255,210,190,0.22), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.38)),
         url("clara-elis.jpg");
       background-size: cover;
       background-position: center;
-      transform: scale(1.03);
-      filter: saturate(1.05);
+      transform: scale(1.02);
+      filter: saturate(1.05) contrast(1.02);
     }
     .vignette{
       position:fixed; inset:0;
-      background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.45) 100%);
+      background: radial-gradient(circle at center, transparent 44%, rgba(0,0,0,0.35) 100%);
       pointer-events:none;
     }
 
-    /* Hjärt-lager */
+    /* Ambient hearts */
     .hearts-layer{
       position:fixed; inset:0;
       pointer-events:none;
@@ -54,28 +57,24 @@
       width:14px; height:14px;
       transform: rotate(45deg);
       opacity:0.18;
-      filter: blur(0.1px);
       animation: floatUp linear forwards;
+      filter: blur(0.1px);
     }
+    .heart, .heart::before, .heart::after{ background: rgba(255,255,255,0.95); }
     .heart::before, .heart::after{
       content:"";
       position:absolute;
       width:14px; height:14px;
-      background: rgba(255,255,255,0.95);
       border-radius: 50%;
-    }
-    .heart{
-      background: rgba(255,255,255,0.95);
     }
     .heart::before{ left:-7px; top:0; }
     .heart::after{ left:0; top:-7px; }
-
     @keyframes floatUp{
       from { transform: translateY(110vh) rotate(45deg); }
       to   { transform: translateY(-20vh) rotate(45deg); }
     }
 
-    /* Card */
+    /* Layout */
     .wrap{
       position:fixed; inset:0;
       display:grid;
@@ -83,43 +82,60 @@
       padding:22px;
     }
     .card{
-      width:min(560px, 100%);
+      width:min(520px, 100%);
       background:var(--card);
       border:1px solid var(--stroke);
       border-radius:24px;
       box-shadow:var(--shadow);
-      padding:22px 18px 18px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      padding:18px 16px 16px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       text-align:center;
+      transition: all 320ms ease;
     }
 
-    /* Elegant header */
+    /* Gör kortet mindre efter “Yes” så bakgrunden syns mer */
+    .card.success{
+      width:min(420px, 100%);
+      background: rgba(255,255,255,0.42);
+      border: 1px solid rgba(255,255,255,0.30);
+      box-shadow: 0 16px 55px rgba(0,0,0,0.18);
+      padding: 18px 16px 14px;
+    }
+    .card.success .btns,
+    .card.success .hint,
+    .card.success .question,
+    .card.success .subtitle{
+      display:none;
+    }
+    .card.success .names{
+      margin-bottom: 6px;
+      opacity:0.95;
+    }
+
     .names{
       font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
       font-size:28px;
       letter-spacing:0.2px;
-      margin:4px 0 10px;
+      margin:4px 0 8px;
     }
     .names .amp{ font-style: italic; opacity:0.85; padding:0 6px; }
-
     .subtitle{
       font-size:13px;
-      opacity:0.75;
-      margin:0 0 14px;
+      opacity:0.78;
+      margin:0 0 12px;
     }
-
     .question{
       font-size:18px;
       line-height:1.45;
-      margin:0 auto 16px;
-      max-width: 44ch;
+      margin:0 auto 14px;
+      max-width: 46ch;
     }
 
     .btns{
       position:relative;
-      height:110px; /* ger utrymme för att flytta "No" */
-      margin-top:6px;
+      height:112px; /* plats att flytta “Nej” */
+      margin-top:4px;
     }
     button{
       border:0;
@@ -129,7 +145,7 @@
       font-weight:650;
       cursor:pointer;
       box-shadow: 0 10px 18px rgba(0,0,0,0.14);
-      transition: transform 120ms ease, filter 120ms ease;
+      transition: transform 120ms ease, filter 120ms ease, opacity 160ms ease;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
     }
@@ -142,7 +158,7 @@
       z-index:2;
     }
     #no{
-      background: rgba(255,255,255,0.95);
+      background: rgba(255,255,255,0.92);
       color:#222;
       border:1px solid rgba(0,0,0,0.10);
       position:absolute;
@@ -155,52 +171,54 @@
     .msg{
       margin-top:10px;
       font-size:18px;
-      font-weight:750;
+      font-weight:800;
       min-height:1.2em;
+      transition: all 260ms ease;
     }
     .submsg{
       margin-top:6px;
       font-size:14px;
-      opacity:0.8;
+      opacity:0.82;
       min-height:1.2em;
+      transition: all 260ms ease;
     }
-
-    /* Fullscreen celebration layer */
-    .celebrate{
-      position:fixed; inset:0;
-      pointer-events:none;
-      opacity:0;
-      transition: opacity 200ms ease;
-    }
-    .celebrate.show{ opacity:1; }
-    .pop{
-      position:absolute;
-      width:18px; height:18px;
-      transform: rotate(45deg);
-      animation: popUp 1100ms ease-out forwards;
-      opacity:0.95;
-    }
-    .pop::before, .pop::after{
-      content:"";
-      position:absolute;
-      width:18px; height:18px;
-      background: rgba(255,255,255,0.95);
-      border-radius:50%;
-    }
-    .pop{ background: rgba(255,255,255,0.95); }
-    .pop::before{ left:-9px; top:0; }
-    .pop::after{ left:0; top:-9px; }
-    @keyframes popUp{
-      0%   { transform: translateY(0) rotate(45deg) scale(0.8); opacity:0; }
-      15%  { opacity:1; }
-      100% { transform: translateY(-95vh) rotate(45deg) scale(1.15); opacity:0; }
-    }
-
-    /* Small footer */
     .hint{
       margin-top:14px;
       font-size:12px;
-      opacity:0.7;
+      opacity:0.72;
+    }
+
+    /* “Flood” hearts */
+    .flood{
+      position:fixed; inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      opacity:0;
+      transition: opacity 140ms ease;
+    }
+    .flood.show{ opacity:1; }
+    .fheart{
+      position:absolute;
+      width:18px; height:18px;
+      transform: rotate(45deg);
+      animation: floodUp 900ms ease-out forwards;
+      opacity:0.95;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,0.12));
+    }
+    .fheart, .fheart::before, .fheart::after{ background: rgba(255,127,179,0.95); }
+    .fheart::before, .fheart::after{
+      content:"";
+      position:absolute;
+      width:18px; height:18px;
+      border-radius:50%;
+    }
+    .fheart::before{ left:-9px; top:0; }
+    .fheart::after{ left:0; top:-9px; }
+
+    @keyframes floodUp{
+      0%   { transform: translateY(0) rotate(45deg) scale(0.85); opacity:0; }
+      15%  { opacity:1; }
+      100% { transform: translateY(-110vh) rotate(45deg) scale(1.20); opacity:0; }
     }
   </style>
 </head>
@@ -210,7 +228,7 @@
   <div class="vignette" aria-hidden="true"></div>
 
   <div class="hearts-layer" id="hearts" aria-hidden="true"></div>
-  <div class="celebrate" id="celebrate" aria-hidden="true"></div>
+  <div class="flood" id="flood" aria-hidden="true"></div>
 
   <div class="wrap">
     <div class="card" id="card">
@@ -224,26 +242,26 @@
 
       <div class="btns" id="btns">
         <button id="yes">Yes! 💕</button>
-        <button id="no">No</button>
+        <button id="no">Nej</button>
       </div>
 
       <div class="msg" id="msg"></div>
       <div class="submsg" id="submsg"></div>
-      <div class="hint">Psst. Det här är byggt för mobil. Prova att trycka “No”.</div>
+      <div class="hint">Psst. Prova att trycka “Nej”.</div>
     </div>
   </div>
 
   <script>
     const heartsLayer = document.getElementById("hearts");
-    const celebrateLayer = document.getElementById("celebrate");
+    const floodLayer  = document.getElementById("flood");
     const card = document.getElementById("card");
     const btns = document.getElementById("btns");
-    const yes = document.getElementById("yes");
-    const no = document.getElementById("no");
-    const msg = document.getElementById("msg");
+    const yes  = document.getElementById("yes");
+    const no   = document.getElementById("no");
+    const msg  = document.getElementById("msg");
     const submsg = document.getElementById("submsg");
 
-    // Subtila bakgrundshjärtan (låg intensitet)
+    // Konstanta, lugna hjärtan i bakgrunden
     function spawnAmbientHeart(){
       const h = document.createElement("div");
       h.className = "heart";
@@ -260,17 +278,21 @@
       heartsLayer.appendChild(h);
       setTimeout(() => h.remove(), (dur + 0.5) * 1000);
     }
-    // starta lugnt, mobilvänligt
     setInterval(spawnAmbientHeart, 520);
 
-    // "No" som smiter — funkar på touch också (pointer events)
+    // “Nej” smiter — utan textkommentarer
     let dodgeCount = 0;
+
+    function placeNoAtCenter(){
+      no.style.left = "50%";
+      no.style.top  = "58px";
+      no.style.transform = "translateX(-50%)";
+    }
+
     function moveNoButton(){
-      // begränsa inom btns-ytan
       const rect = btns.getBoundingClientRect();
       const b = no.getBoundingClientRect();
 
-      // stegrande "svårighet"
       dodgeCount++;
       const padding = 6;
       const maxX = rect.width - b.width - padding;
@@ -279,67 +301,57 @@
       const x = padding + Math.random() * Math.max(0, maxX);
       const y = padding + Math.random() * Math.max(0, maxY);
 
+      // När vi börjar flytta använder vi absoluta pixlar, så ta bort translate
+      no.style.transform = "translateX(0)";
       no.style.left = x + "px";
       no.style.top  = y + "px";
 
-      // lite snabbare respons ju fler försök
-      const blur = Math.min(0.35, 0.10 + dodgeCount * 0.05);
-      no.style.filter = `drop-shadow(0 10px 18px rgba(0,0,0,0.14)) blur(${blur}px)`;
+      // lite “snärt” som ökar
+      const blur = Math.min(0.25, 0.06 + dodgeCount * 0.03);
+      no.style.filter = `blur(${blur}px)`;
     }
 
-    // Flytta vid "pointerdown" + "pointerenter" så den känns omöjlig att fånga på mobil
+    // Touch + hover
     no.addEventListener("pointerdown", (e) => { e.preventDefault(); moveNoButton(); });
-    no.addEventListener("pointerenter", () => { if (dodgeCount < 20) moveNoButton(); });
+    no.addEventListener("pointerenter", () => { if (dodgeCount < 30) moveNoButton(); });
 
-    // Om hon ändå skulle lyckas klicka
-    no.addEventListener("click", () => {
-      msg.textContent = "Det där räknas inte.";
-      submsg.textContent = "Försök igen.";
-      moveNoButton();
-    });
-
-    // Hjärt-explosion på YES
-    function popHearts(){
-      celebrateLayer.classList.add("show");
-      const n = 34;
-      const rect = card.getBoundingClientRect();
-      const originX = rect.left + rect.width/2;
-      const originY = rect.top + rect.height/2;
-
+    // Hjärt-“flood” när hon trycker Yes
+    function floodHearts(){
+      floodLayer.classList.add("show");
+      const n = 90; // “svämma över”
       for(let i=0;i<n;i++){
         const p = document.createElement("div");
-        p.className = "pop";
-        const jitterX = (Math.random()-0.5) * 220;
-        const left = originX + jitterX;
-        p.style.left = left + "px";
-        p.style.top  = (originY + 60 + Math.random()*40) + "px";
-        p.style.animationDuration = (900 + Math.random()*600) + "ms";
-        p.style.opacity = (0.65 + Math.random()*0.35).toFixed(2);
-        celebrateLayer.appendChild(p);
+        p.className = "fheart";
+        p.style.left = (Math.random() * 100) + "vw";
+        p.style.top  = (60 + Math.random() * 40) + "vh";
+        p.style.animationDuration = (650 + Math.random()*650) + "ms";
+        p.style.opacity = (0.55 + Math.random()*0.45).toFixed(2);
+        p.style.transform = `rotate(45deg) scale(${(0.8 + Math.random()*1.2).toFixed(2)})`;
+        floodLayer.appendChild(p);
         setTimeout(() => p.remove(), 1400);
       }
-      setTimeout(() => celebrateLayer.classList.remove("show"), 1200);
+      setTimeout(() => floodLayer.classList.remove("show"), 700);
     }
 
     yes.addEventListener("click", () => {
-      msg.textContent = "Jag visste att du skulle säga ja. 💖";
-      submsg.textContent = "Jag älskar dig, Clara.";
-      popHearts();
+      floodHearts();
 
-      // Lås nej-knappen efter ja
+      // Byt “läge”: mindre ruta, mer bakgrund
+      card.classList.add("success");
+
+      msg.textContent = "Jag visste att du skulle säga ja! 💗";
+      submsg.textContent = "Älskar dig!";
+
+      // Lås nej
       no.style.pointerEvents = "none";
-      no.style.opacity = "0.55";
+      no.style.opacity = "0.5";
       no.style.filter = "none";
     });
 
-    // Sätt startposition som funkar på olika skärmar
-    function resetNoPosition(){
-      no.style.left = "50%";
-      no.style.top  = "58px";
-      no.style.transform = "translateX(-50%)";
-    }
-    window.addEventListener("resize", resetNoPosition);
-    resetNoPosition();
+    window.addEventListener("resize", () => {
+      if (!card.classList.contains("success")) placeNoAtCenter();
+    });
+    placeNoAtCenter();
   </script>
 </body>
 </html>

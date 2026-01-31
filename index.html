@@ -11,7 +11,6 @@
       --pink:#ff7fb3;
       --ink:#141414;
 
-      /* Mer “glas”, mer bakgrund */
       --card: rgba(255,255,255,0.62);
       --stroke: rgba(255,255,255,0.35);
       --shadow: 0 20px 60px rgba(0,0,0,0.22);
@@ -27,7 +26,6 @@
       background:#000;
     }
 
-    /* Bakgrundsbild + mild overlay (mindre mörk än tidigare) */
     .bg{
       position:fixed; inset:0;
       background-image:
@@ -80,7 +78,14 @@
       display:grid;
       place-items:center;
       padding:22px;
+      transition: all 320ms ease;
     }
+    /* Efter "Yes": lägg kortet högt upp */
+    .wrap.success{
+      place-items: start center;
+      padding-top: 18px;
+    }
+
     .card{
       width:min(520px, 100%);
       background:var(--card);
@@ -94,13 +99,13 @@
       transition: all 320ms ease;
     }
 
-    /* Gör kortet mindre efter “Yes” så bakgrunden syns mer */
     .card.success{
       width:min(420px, 100%);
       background: rgba(255,255,255,0.42);
       border: 1px solid rgba(255,255,255,0.30);
       box-shadow: 0 16px 55px rgba(0,0,0,0.18);
       padding: 18px 16px 14px;
+      margin-top: 4px;
     }
     .card.success .btns,
     .card.success .hint,
@@ -134,7 +139,7 @@
 
     .btns{
       position:relative;
-      height:112px; /* plats att flytta “Nej” */
+      height:112px;
       margin-top:4px;
     }
     button{
@@ -154,18 +159,26 @@
     #yes{
       background: linear-gradient(135deg, var(--rose), var(--rose2));
       color:#fff;
-      position:relative;
+      position:absolute;
+      left:50%;
+      top:10px;
+      transform: translateX(-50%);
       z-index:2;
     }
+
     #no{
       background: rgba(255,255,255,0.92);
       color:#222;
       border:1px solid rgba(0,0,0,0.10);
       position:absolute;
       left: 50%;
-      top: 58px;
+      top: 60px;
       transform: translateX(-50%);
       z-index:1;
+
+      /* mjukare flytt */
+      transition: left 220ms ease, top 220ms ease, filter 220ms ease, opacity 160ms ease;
+      will-change: left, top;
     }
 
     .msg{
@@ -214,7 +227,6 @@
     }
     .fheart::before{ left:-9px; top:0; }
     .fheart::after{ left:0; top:-9px; }
-
     @keyframes floodUp{
       0%   { transform: translateY(0) rotate(45deg) scale(0.85); opacity:0; }
       15%  { opacity:1; }
@@ -230,7 +242,7 @@
   <div class="hearts-layer" id="hearts" aria-hidden="true"></div>
   <div class="flood" id="flood" aria-hidden="true"></div>
 
-  <div class="wrap">
+  <div class="wrap" id="wrap">
     <div class="card" id="card">
       <div class="names">Elis <span class="amp">&</span> Clara</div>
       <div class="subtitle">Valentine’s proposal 💕</div>
@@ -254,6 +266,7 @@
   <script>
     const heartsLayer = document.getElementById("hearts");
     const floodLayer  = document.getElementById("flood");
+    const wrap = document.getElementById("wrap");
     const card = document.getElementById("card");
     const btns = document.getElementById("btns");
     const yes  = document.getElementById("yes");
@@ -261,7 +274,7 @@
     const msg  = document.getElementById("msg");
     const submsg = document.getElementById("submsg");
 
-    // Konstanta, lugna hjärtan i bakgrunden
+    // Ambient hearts
     function spawnAmbientHeart(){
       const h = document.createElement("div");
       h.className = "heart";
@@ -280,45 +293,10 @@
     }
     setInterval(spawnAmbientHeart, 520);
 
-    // “Nej” smiter — utan textkommentarer
-    let dodgeCount = 0;
-
-    function placeNoAtCenter(){
-      no.style.left = "50%";
-      no.style.top  = "58px";
-      no.style.transform = "translateX(-50%)";
-    }
-
-    function moveNoButton(){
-      const rect = btns.getBoundingClientRect();
-      const b = no.getBoundingClientRect();
-
-      dodgeCount++;
-      const padding = 6;
-      const maxX = rect.width - b.width - padding;
-      const maxY = rect.height - b.height - padding;
-
-      const x = padding + Math.random() * Math.max(0, maxX);
-      const y = padding + Math.random() * Math.max(0, maxY);
-
-      // När vi börjar flytta använder vi absoluta pixlar, så ta bort translate
-      no.style.transform = "translateX(0)";
-      no.style.left = x + "px";
-      no.style.top  = y + "px";
-
-      // lite “snärt” som ökar
-      const blur = Math.min(0.25, 0.06 + dodgeCount * 0.03);
-      no.style.filter = `blur(${blur}px)`;
-    }
-
-    // Touch + hover
-    no.addEventListener("pointerdown", (e) => { e.preventDefault(); moveNoButton(); });
-    no.addEventListener("pointerenter", () => { if (dodgeCount < 30) moveNoButton(); });
-
-    // Hjärt-“flood” när hon trycker Yes
+    // Hjärt-“flood”
     function floodHearts(){
       floodLayer.classList.add("show");
-      const n = 90; // “svämma över”
+      const n = 90;
       for(let i=0;i<n;i++){
         const p = document.createElement("div");
         p.className = "fheart";
@@ -333,14 +311,82 @@
       setTimeout(() => floodLayer.classList.remove("show"), 700);
     }
 
+    // Helper: overlap test
+    function intersects(a, b, pad=6){
+      return !(
+        a.right  < b.left  + pad ||
+        a.left   > b.right - pad ||
+        a.bottom < b.top   + pad ||
+        a.top    > b.bottom- pad
+      );
+    }
+
+    // “Nej” smiter mjukt och undviker Yes
+    let dodgeCount = 0;
+
+    function placeNoAtCenter(){
+      no.style.left = "50%";
+      no.style.top  = "60px";
+      no.style.transform = "translateX(-50%)";
+      no.style.filter = "none";
+      dodgeCount = 0;
+    }
+
+    function moveNoButton(){
+      const area = btns.getBoundingClientRect();
+      const yesRect = yes.getBoundingClientRect();
+      const b = no.getBoundingClientRect();
+
+      dodgeCount++;
+
+      const padding = 6;
+      const maxX = area.width - b.width - padding;
+      const maxY = area.height - b.height - padding;
+
+      // Vi placerar i btns-koordinater (px), så ta bort translate
+      no.style.transform = "translateX(0)";
+
+      // Försök hitta en position som INTE överlappar Yes
+      let tries = 0;
+      let x, y;
+      do {
+        x = padding + Math.random() * Math.max(0, maxX);
+        y = padding + Math.random() * Math.max(0, maxY);
+
+        // Bygg ett “framtida” rect för Nej i viewport-koordinater
+        const future = {
+          left: area.left + x,
+          top:  area.top  + y,
+          right: area.left + x + b.width,
+          bottom: area.top + y + b.height
+        };
+
+        tries++;
+        if (tries > 30) break; // fail-safe
+        // Loopar tills den inte krockar med Yes
+        if (!intersects(future, yesRect, 10)) break;
+      } while (true);
+
+      no.style.left = x + "px";
+      no.style.top  = y + "px";
+
+      // lite mer “panik” med fler försök, men mjukt
+      const blur = Math.min(0.22, 0.04 + dodgeCount * 0.02);
+      no.style.filter = `blur(${blur}px)`;
+    }
+
+    // Touch + hover
+    no.addEventListener("pointerdown", (e) => { e.preventDefault(); moveNoButton(); });
+    no.addEventListener("pointerenter", () => { if (dodgeCount < 40) moveNoButton(); });
+
     yes.addEventListener("click", () => {
       floodHearts();
 
-      // Byt “läge”: mindre ruta, mer bakgrund
+      wrap.classList.add("success");
       card.classList.add("success");
 
-      msg.textContent = "Jag visste att du skulle säga ja! 💗";
-      submsg.textContent = "Älskar dig!";
+      msg.textContent = "Jag visste du skulle säga ja! 💗";
+      submsg.innerHTML = "Det kommer bli en otrolig Alla Hjärtans Dag.<br/>Älskar dig!";
 
       // Lås nej
       no.style.pointerEvents = "none";
@@ -351,6 +397,7 @@
     window.addEventListener("resize", () => {
       if (!card.classList.contains("success")) placeNoAtCenter();
     });
+
     placeNoAtCenter();
   </script>
 </body>

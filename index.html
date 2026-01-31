@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valentine?</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, #ffe1ea, #fff);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 28px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 { margin: 0 0 10px; font-size: 28px; }
+    p { margin: 0 0 18px; color: #333; }
+    .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+    }
+    #yes { background: #ff3b6a; color: white; }
+    #no  { background: #f2f2f2; }
+    .msg {
+      margin-top: 18px;
+      font-size: 18px;
+      font-weight: 600;
+      min-height: 1.2em;
+    }
+    .tiny { margin-top: 10px; font-size: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Vill du vara min Valentine? 💘</h1>
+    <p>Jag lovar rimlig romantik, minimal stress och bra fika.</p>
+
+    <div class="btns">
+      <button id="yes">Ja</button>
+      <button id="no">Nej</button>
+    </div>
+
+    <div class="msg" id="msg"></div>
+    <div class="tiny">PS: Du får ändra dig senare. Men “Ja” är starkt rekommenderat.</div>
+  </div>
+
+  <script>
+    const msg = document.getElementById("msg");
+    const yes = document.getElementById("yes");
+    const no  = document.getElementById("no");
+
+    yes.addEventListener("click", () => {
+      msg.textContent = "Yesss. Då är det bestämt. 💞";
+      // liten effekt
+      document.body.style.transform = "scale(1.002)";
+      setTimeout(() => document.body.style.transform = "", 120);
+    });
+
+    // “Nej” flyttar sig lite (på skoj)
+    no.addEventListener("mouseenter", () => {
+      const dx = Math.floor((Math.random() - 0.5) * 220);
+      const dy = Math.floor((Math.random() - 0.5) * 140);
+      no.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+    no.addEventListener("click", () => {
+      msg.textContent = "Okej… men jag misstänker att du klickade fel. 😄";
+    });
+  </script>
+</body>
+</html>

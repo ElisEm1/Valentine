@@ -3,75 +3,122 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Valentine?</title>
+  <title>Elis & Clara — Valentine</title>
   <style>
     :root{
-      --bg1:#fff2f6;
-      --bg2:#ffffff;
-      --card: rgba(255,255,255,0.92);
-      --text:#1a1a1a;
-      --muted:#4b4b4b;
-      --yes:#ff2f6d;
-      --yes2:#ff5b8b;
-      --no:#f3f3f3;
-      --shadow: 0 18px 50px rgba(0,0,0,0.10);
+      --rose:#ff2f6d;
+      --rose2:#ff6aa0;
+      --ink:#141414;
+      --card: rgba(255,255,255,0.86);
+      --stroke: rgba(0,0,0,0.08);
+      --shadow: 0 20px 60px rgba(0,0,0,0.20);
     }
-    *{box-sizing:border-box}
+
+    *{ box-sizing:border-box; }
+    html, body { height:100%; }
     body{
       margin:0;
-      min-height:100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      overflow:hidden;
+      background:#000;
+    }
+
+    /* Bakgrundsbild + romantisk overlay */
+    .bg{
+      position:fixed; inset:0;
+      background-image:
+        radial-gradient(1200px 800px at 20% 10%, rgba(255,47,109,0.35), transparent 55%),
+        radial-gradient(1200px 800px at 80% 20%, rgba(255,190,170,0.30), transparent 55%),
+        linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)),
+        url("clara-elis.jpg");
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.03);
+      filter: saturate(1.05);
+    }
+    .vignette{
+      position:fixed; inset:0;
+      background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.45) 100%);
+      pointer-events:none;
+    }
+
+    /* Hjärt-lager */
+    .hearts-layer{
+      position:fixed; inset:0;
+      pointer-events:none;
+      overflow:hidden;
+    }
+    .heart{
+      position:absolute;
+      width:14px; height:14px;
+      transform: rotate(45deg);
+      opacity:0.18;
+      filter: blur(0.1px);
+      animation: floatUp linear forwards;
+    }
+    .heart::before, .heart::after{
+      content:"";
+      position:absolute;
+      width:14px; height:14px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 50%;
+    }
+    .heart{
+      background: rgba(255,255,255,0.95);
+    }
+    .heart::before{ left:-7px; top:0; }
+    .heart::after{ left:0; top:-7px; }
+
+    @keyframes floatUp{
+      from { transform: translateY(110vh) rotate(45deg); }
+      to   { transform: translateY(-20vh) rotate(45deg); }
+    }
+
+    /* Card */
+    .wrap{
+      position:fixed; inset:0;
       display:grid;
       place-items:center;
-      padding:28px;
-      color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(900px 500px at 20% 10%, #ffe1eb 0%, transparent 60%),
-        radial-gradient(900px 500px at 80% 20%, #ffe7d6 0%, transparent 55%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
+      padding:22px;
     }
     .card{
       width:min(560px, 100%);
       background:var(--card);
-      border:1px solid rgba(0,0,0,0.06);
+      border:1px solid var(--stroke);
       border-radius:24px;
       box-shadow:var(--shadow);
-      padding:30px 26px 24px;
+      padding:22px 18px 18px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       text-align:center;
-      position:relative;
-      overflow:hidden;
     }
-    .badge{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding:8px 12px;
-      border-radius:999px;
-      background:rgba(255,47,109,0.10);
-      border:1px solid rgba(255,47,109,0.18);
-      color:#b0133f;
-      font-weight:600;
-      font-size:13px;
-      margin-bottom:14px;
-    }
-    h1{
-      margin:0 0 10px;
+
+    /* Elegant header */
+    .names{
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
       font-size:28px;
-      letter-spacing:-0.02em;
-      line-height:1.15;
+      letter-spacing:0.2px;
+      margin:4px 0 10px;
     }
-    p{
-      margin:0 auto 22px;
-      max-width:46ch;
-      color:var(--muted);
-      line-height:1.5;
-      font-size:16px;
+    .names .amp{ font-style: italic; opacity:0.85; padding:0 6px; }
+
+    .subtitle{
+      font-size:13px;
+      opacity:0.75;
+      margin:0 0 14px;
     }
+
+    .question{
+      font-size:18px;
+      line-height:1.45;
+      margin:0 auto 16px;
+      max-width: 44ch;
+    }
+
     .btns{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      flex-wrap:wrap;
+      position:relative;
+      height:110px; /* ger utrymme för att flytta "No" */
       margin-top:6px;
     }
     button{
@@ -81,143 +128,218 @@
       font-size:16px;
       font-weight:650;
       cursor:pointer;
-      box-shadow: 0 10px 18px rgba(0,0,0,0.10);
-      transform: translateZ(0);
-      transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.14);
+      transition: transform 120ms ease, filter 120ms ease;
       user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
-    button:hover{ transform: translateY(-1px); box-shadow: 0 12px 22px rgba(0,0,0,0.12); }
-    button:active{ transform: translateY(0px) scale(0.99); }
+    button:active{ transform: scale(0.985); }
+
     #yes{
-      color:white;
-      background: linear-gradient(135deg, var(--yes), var(--yes2));
+      background: linear-gradient(135deg, var(--rose), var(--rose2));
+      color:#fff;
+      position:relative;
+      z-index:2;
     }
     #no{
-      background:var(--no);
+      background: rgba(255,255,255,0.95);
       color:#222;
-      position:relative;
+      border:1px solid rgba(0,0,0,0.10);
+      position:absolute;
+      left: 50%;
+      top: 58px;
+      transform: translateX(-50%);
+      z-index:1;
     }
+
     .msg{
-      margin-top:18px;
+      margin-top:10px;
       font-size:18px;
-      font-weight:700;
+      font-weight:750;
       min-height:1.2em;
     }
     .submsg{
-      margin-top:8px;
-      color:var(--muted);
+      margin-top:6px;
       font-size:14px;
+      opacity:0.8;
       min-height:1.2em;
     }
-    .footer{
-      margin-top:18px;
+
+    /* Fullscreen celebration layer */
+    .celebrate{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity 200ms ease;
+    }
+    .celebrate.show{ opacity:1; }
+    .pop{
+      position:absolute;
+      width:18px; height:18px;
+      transform: rotate(45deg);
+      animation: popUp 1100ms ease-out forwards;
+      opacity:0.95;
+    }
+    .pop::before, .pop::after{
+      content:"";
+      position:absolute;
+      width:18px; height:18px;
+      background: rgba(255,255,255,0.95);
+      border-radius:50%;
+    }
+    .pop{ background: rgba(255,255,255,0.95); }
+    .pop::before{ left:-9px; top:0; }
+    .pop::after{ left:0; top:-9px; }
+    @keyframes popUp{
+      0%   { transform: translateY(0) rotate(45deg) scale(0.8); opacity:0; }
+      15%  { opacity:1; }
+      100% { transform: translateY(-95vh) rotate(45deg) scale(1.15); opacity:0; }
+    }
+
+    /* Small footer */
+    .hint{
+      margin-top:14px;
       font-size:12px;
-      color:#666;
-    }
-    .hearts{
-      position:absolute;
-      inset:-40px -40px auto auto;
-      width:220px;
-      height:220px;
-      opacity:0.12;
-      transform: rotate(12deg);
-      pointer-events:none;
-      filter: blur(0.2px);
-    }
-    .confetti{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      overflow:hidden;
-    }
-    .piece{
-      position:absolute;
-      top:-10px;
-      width:10px;
-      height:14px;
-      border-radius:3px;
-      animation: fall 900ms linear forwards;
-      opacity:0.9;
-    }
-    @keyframes fall{
-      to{ transform: translateY(110vh) rotate(540deg); opacity:0.0; }
+      opacity:0.7;
     }
   </style>
 </head>
 
 <body>
-  <div class="card" id="card">
-    <svg class="hearts" viewBox="0 0 200 200" aria-hidden="true">
-      <path d="M100 175s-65-42-83-79c-12-25 4-55 33-60 18-3 35 7 50 24 15-17 32-27 50-24 29 5 45 35 33 60-18 37-83 79-83 79z" fill="#ff2f6d"/>
-      <path d="M100 150s-52-33-67-62c-10-20 3-44 26-48 14-2 28 6 41 20 13-14 27-22 41-20 23 4 36 28 26 48-15 29-67 62-67 62z" fill="#ff2f6d" opacity="0.7"/>
-    </svg>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
 
-    <div class="badge">💌 En fråga, helt utan press</div>
-    <h1 id="title">Vill du vara min Valentine?</h1>
-    <p id="lead">Jag tänkte att vi gör något mysigt tillsammans. Säg ja, så bokar jag resten.</p>
+  <div class="hearts-layer" id="hearts" aria-hidden="true"></div>
+  <div class="celebrate" id="celebrate" aria-hidden="true"></div>
 
-    <div class="btns">
-      <button id="yes">Ja</button>
-      <button id="no">Nej</button>
+  <div class="wrap">
+    <div class="card" id="card">
+      <div class="names">Elis <span class="amp">&</span> Clara</div>
+      <div class="subtitle">Valentine’s proposal 💕</div>
+
+      <p class="question">
+        Clara, du är den viktigaste personen i mitt liv.<br/>
+        Vill du vara min Valentine?
+      </p>
+
+      <div class="btns" id="btns">
+        <button id="yes">Yes! 💕</button>
+        <button id="no">No</button>
+      </div>
+
+      <div class="msg" id="msg"></div>
+      <div class="submsg" id="submsg"></div>
+      <div class="hint">Psst. Det här är byggt för mobil. Prova att trycka “No”.</div>
     </div>
-
-    <div class="msg" id="msg"></div>
-    <div class="submsg" id="submsg"></div>
-
-    <div class="footer" id="footer">Du kan alltid ändra dig. Men jag gillar när du säger ja.</div>
   </div>
 
-  <div class="confetti" id="confetti"></div>
-
   <script>
+    const heartsLayer = document.getElementById("hearts");
+    const celebrateLayer = document.getElementById("celebrate");
+    const card = document.getElementById("card");
+    const btns = document.getElementById("btns");
+    const yes = document.getElementById("yes");
+    const no = document.getElementById("no");
     const msg = document.getElementById("msg");
     const submsg = document.getElementById("submsg");
-    const yes = document.getElementById("yes");
-    const no  = document.getElementById("no");
-    const confetti = document.getElementById("confetti");
 
-    // Gör sidan mer personlig här:
-    const HER_NAME = ""; // t.ex. "Elin"
-    const PLAN_TEXT = "Fredag kväll: middag + promenad. Eller du väljer.";
-    if (HER_NAME) document.getElementById("title").textContent = `Vill du vara min Valentine, ${HER_NAME}?`;
+    // Subtila bakgrundshjärtan (låg intensitet)
+    function spawnAmbientHeart(){
+      const h = document.createElement("div");
+      h.className = "heart";
+      const left = Math.random() * 100;
+      const size = 10 + Math.random() * 14;
+      const dur  = 8 + Math.random() * 10;
 
-    function popConfetti() {
-      const n = 24;
-      for (let i = 0; i < n; i++) {
-        const el = document.createElement("div");
-        el.className = "piece";
-        el.style.left = Math.random() * 100 + "vw";
-        el.style.background = `hsl(${Math.floor(Math.random()*360)} 85% 65%)`;
-        el.style.animationDuration = (700 + Math.random()*700) + "ms";
-        el.style.transform = `rotate(${Math.random()*180}deg)`;
-        confetti.appendChild(el);
-        setTimeout(() => el.remove(), 1400);
+      h.style.left = left + "vw";
+      h.style.width = size + "px";
+      h.style.height = size + "px";
+      h.style.opacity = (0.10 + Math.random() * 0.18).toFixed(2);
+      h.style.animationDuration = dur + "s";
+
+      heartsLayer.appendChild(h);
+      setTimeout(() => h.remove(), (dur + 0.5) * 1000);
+    }
+    // starta lugnt, mobilvänligt
+    setInterval(spawnAmbientHeart, 520);
+
+    // "No" som smiter — funkar på touch också (pointer events)
+    let dodgeCount = 0;
+    function moveNoButton(){
+      // begränsa inom btns-ytan
+      const rect = btns.getBoundingClientRect();
+      const b = no.getBoundingClientRect();
+
+      // stegrande "svårighet"
+      dodgeCount++;
+      const padding = 6;
+      const maxX = rect.width - b.width - padding;
+      const maxY = rect.height - b.height - padding;
+
+      const x = padding + Math.random() * Math.max(0, maxX);
+      const y = padding + Math.random() * Math.max(0, maxY);
+
+      no.style.left = x + "px";
+      no.style.top  = y + "px";
+
+      // lite snabbare respons ju fler försök
+      const blur = Math.min(0.35, 0.10 + dodgeCount * 0.05);
+      no.style.filter = `drop-shadow(0 10px 18px rgba(0,0,0,0.14)) blur(${blur}px)`;
+    }
+
+    // Flytta vid "pointerdown" + "pointerenter" så den känns omöjlig att fånga på mobil
+    no.addEventListener("pointerdown", (e) => { e.preventDefault(); moveNoButton(); });
+    no.addEventListener("pointerenter", () => { if (dodgeCount < 20) moveNoButton(); });
+
+    // Om hon ändå skulle lyckas klicka
+    no.addEventListener("click", () => {
+      msg.textContent = "Det där räknas inte.";
+      submsg.textContent = "Försök igen.";
+      moveNoButton();
+    });
+
+    // Hjärt-explosion på YES
+    function popHearts(){
+      celebrateLayer.classList.add("show");
+      const n = 34;
+      const rect = card.getBoundingClientRect();
+      const originX = rect.left + rect.width/2;
+      const originY = rect.top + rect.height/2;
+
+      for(let i=0;i<n;i++){
+        const p = document.createElement("div");
+        p.className = "pop";
+        const jitterX = (Math.random()-0.5) * 220;
+        const left = originX + jitterX;
+        p.style.left = left + "px";
+        p.style.top  = (originY + 60 + Math.random()*40) + "px";
+        p.style.animationDuration = (900 + Math.random()*600) + "ms";
+        p.style.opacity = (0.65 + Math.random()*0.35).toFixed(2);
+        celebrateLayer.appendChild(p);
+        setTimeout(() => p.remove(), 1400);
       }
+      setTimeout(() => celebrateLayer.classList.remove("show"), 1200);
     }
 
     yes.addEventListener("click", () => {
-      msg.textContent = "Yes. 💖";
-      submsg.textContent = PLAN_TEXT;
-      popConfetti();
-      no.style.transform = "";
+      msg.textContent = "Jag visste att du skulle säga ja. 💖";
+      submsg.textContent = "Jag älskar dig, Clara.";
+      popHearts();
+
+      // Lås nej-knappen efter ja
       no.style.pointerEvents = "none";
-      yes.style.filter = "brightness(1.02)";
+      no.style.opacity = "0.55";
+      no.style.filter = "none";
     });
 
-    // Mindre “barnsligt”: nej-knappen flyttar sig bara lite, och bara ett par gånger
-    let dodges = 0;
-    no.addEventListener("mouseenter", () => {
-      if (dodges >= 3) return;
-      dodges++;
-      const dx = Math.floor((Math.random() - 0.5) * 160);
-      const dy = Math.floor((Math.random() - 0.5) * 90);
-      no.style.transform = `translate(${dx}px, ${dy}px)`;
-    });
-
-    no.addEventListener("click", () => {
-      msg.textContent = "Okej.";
-      submsg.textContent = "Jag frågar igen senare – och då har jag bättre argument.";
-    });
+    // Sätt startposition som funkar på olika skärmar
+    function resetNoPosition(){
+      no.style.left = "50%";
+      no.style.top  = "58px";
+      no.style.transform = "translateX(-50%)";
+    }
+    window.addEventListener("resize", resetNoPosition);
+    resetNoPosition();
   </script>
 </body>
 </html>

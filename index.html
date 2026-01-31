@@ -5,51 +5,156 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Valentine?</title>
   <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(circle at top, #ffe1ea, #fff);
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
+    :root{
+      --bg1:#fff2f6;
+      --bg2:#ffffff;
+      --card: rgba(255,255,255,0.92);
+      --text:#1a1a1a;
+      --muted:#4b4b4b;
+      --yes:#ff2f6d;
+      --yes2:#ff5b8b;
+      --no:#f3f3f3;
+      --shadow: 0 18px 50px rgba(0,0,0,0.10);
     }
-    .card {
-      background: rgba(255,255,255,0.9);
-      border: 1px solid rgba(0,0,0,0.06);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      padding: 28px;
-      max-width: 520px;
-      width: 100%;
-      text-align: center;
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:28px;
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(900px 500px at 20% 10%, #ffe1eb 0%, transparent 60%),
+        radial-gradient(900px 500px at 80% 20%, #ffe7d6 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
     }
-    h1 { margin: 0 0 10px; font-size: 28px; }
-    p { margin: 0 0 18px; color: #333; }
-    .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    button {
-      border: 0;
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-size: 16px;
-      cursor: pointer;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+    .card{
+      width:min(560px, 100%);
+      background:var(--card);
+      border:1px solid rgba(0,0,0,0.06);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:30px 26px 24px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
     }
-    #yes { background: #ff3b6a; color: white; }
-    #no  { background: #f2f2f2; }
-    .msg {
-      margin-top: 18px;
-      font-size: 18px;
-      font-weight: 600;
-      min-height: 1.2em;
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,47,109,0.10);
+      border:1px solid rgba(255,47,109,0.18);
+      color:#b0133f;
+      font-weight:600;
+      font-size:13px;
+      margin-bottom:14px;
     }
-    .tiny { margin-top: 10px; font-size: 12px; color: #666; }
+    h1{
+      margin:0 0 10px;
+      font-size:28px;
+      letter-spacing:-0.02em;
+      line-height:1.15;
+    }
+    p{
+      margin:0 auto 22px;
+      max-width:46ch;
+      color:var(--muted);
+      line-height:1.5;
+      font-size:16px;
+    }
+    .btns{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:6px;
+    }
+    button{
+      border:0;
+      border-radius:999px;
+      padding:12px 18px;
+      font-size:16px;
+      font-weight:650;
+      cursor:pointer;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.10);
+      transform: translateZ(0);
+      transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+      user-select:none;
+    }
+    button:hover{ transform: translateY(-1px); box-shadow: 0 12px 22px rgba(0,0,0,0.12); }
+    button:active{ transform: translateY(0px) scale(0.99); }
+    #yes{
+      color:white;
+      background: linear-gradient(135deg, var(--yes), var(--yes2));
+    }
+    #no{
+      background:var(--no);
+      color:#222;
+      position:relative;
+    }
+    .msg{
+      margin-top:18px;
+      font-size:18px;
+      font-weight:700;
+      min-height:1.2em;
+    }
+    .submsg{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:14px;
+      min-height:1.2em;
+    }
+    .footer{
+      margin-top:18px;
+      font-size:12px;
+      color:#666;
+    }
+    .hearts{
+      position:absolute;
+      inset:-40px -40px auto auto;
+      width:220px;
+      height:220px;
+      opacity:0.12;
+      transform: rotate(12deg);
+      pointer-events:none;
+      filter: blur(0.2px);
+    }
+    .confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+    }
+    .piece{
+      position:absolute;
+      top:-10px;
+      width:10px;
+      height:14px;
+      border-radius:3px;
+      animation: fall 900ms linear forwards;
+      opacity:0.9;
+    }
+    @keyframes fall{
+      to{ transform: translateY(110vh) rotate(540deg); opacity:0.0; }
+    }
   </style>
 </head>
+
 <body>
-  <div class="card">
-    <h1>Vill du vara min Valentine? 💘</h1>
-    <p>Jag lovar rimlig romantik, minimal stress och bra fika.</p>
+  <div class="card" id="card">
+    <svg class="hearts" viewBox="0 0 200 200" aria-hidden="true">
+      <path d="M100 175s-65-42-83-79c-12-25 4-55 33-60 18-3 35 7 50 24 15-17 32-27 50-24 29 5 45 35 33 60-18 37-83 79-83 79z" fill="#ff2f6d"/>
+      <path d="M100 150s-52-33-67-62c-10-20 3-44 26-48 14-2 28 6 41 20 13-14 27-22 41-20 23 4 36 28 26 48-15 29-67 62-67 62z" fill="#ff2f6d" opacity="0.7"/>
+    </svg>
+
+    <div class="badge">💌 En fråga, helt utan press</div>
+    <h1 id="title">Vill du vara min Valentine?</h1>
+    <p id="lead">Jag tänkte att vi gör något mysigt tillsammans. Säg ja, så bokar jag resten.</p>
 
     <div class="btns">
       <button id="yes">Ja</button>
@@ -57,29 +162,61 @@
     </div>
 
     <div class="msg" id="msg"></div>
-    <div class="tiny">PS: Du får ändra dig senare. Men “Ja” är starkt rekommenderat.</div>
+    <div class="submsg" id="submsg"></div>
+
+    <div class="footer" id="footer">Du kan alltid ändra dig. Men jag gillar när du säger ja.</div>
   </div>
+
+  <div class="confetti" id="confetti"></div>
 
   <script>
     const msg = document.getElementById("msg");
+    const submsg = document.getElementById("submsg");
     const yes = document.getElementById("yes");
     const no  = document.getElementById("no");
+    const confetti = document.getElementById("confetti");
+
+    // Gör sidan mer personlig här:
+    const HER_NAME = ""; // t.ex. "Elin"
+    const PLAN_TEXT = "Fredag kväll: middag + promenad. Eller du väljer.";
+    if (HER_NAME) document.getElementById("title").textContent = `Vill du vara min Valentine, ${HER_NAME}?`;
+
+    function popConfetti() {
+      const n = 24;
+      for (let i = 0; i < n; i++) {
+        const el = document.createElement("div");
+        el.className = "piece";
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.background = `hsl(${Math.floor(Math.random()*360)} 85% 65%)`;
+        el.style.animationDuration = (700 + Math.random()*700) + "ms";
+        el.style.transform = `rotate(${Math.random()*180}deg)`;
+        confetti.appendChild(el);
+        setTimeout(() => el.remove(), 1400);
+      }
+    }
 
     yes.addEventListener("click", () => {
-      msg.textContent = "Yesss. Då är det bestämt. 💞";
-      // liten effekt
-      document.body.style.transform = "scale(1.002)";
-      setTimeout(() => document.body.style.transform = "", 120);
+      msg.textContent = "Yes. 💖";
+      submsg.textContent = PLAN_TEXT;
+      popConfetti();
+      no.style.transform = "";
+      no.style.pointerEvents = "none";
+      yes.style.filter = "brightness(1.02)";
     });
 
-    // “Nej” flyttar sig lite (på skoj)
+    // Mindre “barnsligt”: nej-knappen flyttar sig bara lite, och bara ett par gånger
+    let dodges = 0;
     no.addEventListener("mouseenter", () => {
-      const dx = Math.floor((Math.random() - 0.5) * 220);
-      const dy = Math.floor((Math.random() - 0.5) * 140);
+      if (dodges >= 3) return;
+      dodges++;
+      const dx = Math.floor((Math.random() - 0.5) * 160);
+      const dy = Math.floor((Math.random() - 0.5) * 90);
       no.style.transform = `translate(${dx}px, ${dy}px)`;
     });
+
     no.addEventListener("click", () => {
-      msg.textContent = "Okej… men jag misstänker att du klickade fel. 😄";
+      msg.textContent = "Okej.";
+      submsg.textContent = "Jag frågar igen senare – och då har jag bättre argument.";
     });
   </script>
 </body>
